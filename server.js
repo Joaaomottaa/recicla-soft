@@ -8,16 +8,21 @@ const bcrypt  = require('bcrypt');
 const app = express();
 app.use(express.json());
 
+// Se você estiver servindo o frontend e API no mesmo domínio, não precisa de CORS.
+// Caso sirva frontend separado, descomente abaixo:
+// const cors = require('cors');
+// app.use(cors());
 
-// Configuração do pool MySQL
-const pool = mysql.createPool({
-  host:     '127.0.0.1',
-  user:     'root',
-  password: 'SUA_NOVA_SENHA',        // ou sua senha
-  database: 'recicla_soft',
-  waitForConnections: true,
-  connectionLimit: 10
-});
+// Conexão via URI única (definida em DATABASE_URL)
+const dbUrl = process.env.DATABASE_URL;
+if (!dbUrl) {
+  console.error('❌ Erro: DATABASE_URL não informada');
+  process.exit(1);
+}
+
+// A mysql2 aceita diretamente uma connection string:
+// ex: "mysql://root:senha@host:porta/database"
+const pool = mysql.createPool(dbUrl);
 
 // --- Registro ---
 app.post('/api/register', async (req, res) => {
@@ -50,7 +55,6 @@ app.post('/api/login', async (req, res) => {
     const valid = await bcrypt.compare(password, rows[0].password);
     if (!valid)  return res.status(400).json({ error: 'Credenciais inválidas' });
 
-    // Retorna userId e nome para o frontend
     res.json({ success: true, userId: rows[0].user_id, name: rows[0].name });
   } catch (err) {
     console.error(err);
@@ -129,7 +133,6 @@ app.post('/api/sales', async (req, res) => {
 });
 
 // --- Listar últimas 3 vendas do usuário ---
-
 app.get('/api/sales', async (req, res) => {
   const userId = parseInt(req.query.userId, 10);
   if (!userId) return res.status(400).json({ error: 'userId é obrigatório' });
@@ -155,6 +158,7 @@ app.get('/api/sales', async (req, res) => {
   }
 });
 
+// --- Listar estoque agregado do usuário ---
 app.get('/api/stock', async (req, res) => {
   const userId = parseInt(req.query.userId, 10);
   if (!userId) return res.status(400).json({ error: 'userId é obrigatório' });
@@ -162,9 +166,9 @@ app.get('/api/stock', async (req, res) => {
   try {
     const [rows] = await pool.query(
       `SELECT
-         m.name                                       AS material,
-         SUM(s.quantity_kg)                           AS total_qty,
-         SUM(s.total_price)                           AS total_value
+         m.name             AS material,
+         SUM(s.quantity_kg) AS total_qty,
+         SUM(s.total_price) AS total_value
        FROM sales s
        JOIN materials m ON s.material_id = m.material_id
        WHERE s.user_id = ?
@@ -179,6 +183,7 @@ app.get('/api/stock', async (req, res) => {
   }
 });
 
+// --- Remover material ---
 app.delete('/api/materials/:id', async (req, res) => {
   const id = req.params.id;
   try {
@@ -190,6 +195,7 @@ app.delete('/api/materials/:id', async (req, res) => {
   }
 });
 
+// Serve o frontend estático
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Inicia o servidor
