@@ -134,17 +134,13 @@ app.post('/api/sales', async (req, res) => {
   }
 });
 
-// --- Listar últimas 3 vendas do usuário ---
+// --- Listar últimas 3 vendas ---
 app.get('/api/sales', async (req, res) => {
   const userId = parseInt(req.query.userId, 10);
   if (!userId) return res.status(400).json({ error: 'userId é obrigatório' });
   try {
     const [rows] = await pool.query(
-      `SELECT
-         m.name       AS material,
-         s.quantity_kg,
-         s.total_price,
-         s.sale_datetime
+      `SELECT m.name AS material, s.quantity_kg, s.total_price, s.sale_datetime
        FROM sales s
        JOIN materials m ON s.material_id = m.material_id
        WHERE s.user_id = ?
@@ -159,16 +155,15 @@ app.get('/api/sales', async (req, res) => {
   }
 });
 
-// --- Listar estoque agregado do usuário ---
+// --- Listar estoque agregado ---
 app.get('/api/stock', async (req, res) => {
   const userId = parseInt(req.query.userId, 10);
   if (!userId) return res.status(400).json({ error: 'userId é obrigatório' });
   try {
     const [rows] = await pool.query(
-      `SELECT
-         m.name             AS material,
-         SUM(s.quantity_kg) AS total_qty,
-         SUM(s.total_price) AS total_value
+      `SELECT m.name AS material,
+              SUM(s.quantity_kg) AS total_qty,
+              SUM(s.total_price) AS total_value
        FROM sales s
        JOIN materials m ON s.material_id = m.material_id
        WHERE s.user_id = ?
@@ -183,13 +178,15 @@ app.get('/api/stock', async (req, res) => {
   }
 });
 
-// --- Serve estáticos e SPA ---
+// Serve estáticos da pasta /public
 app.use(express.static(path.join(__dirname, 'public')));
-app.get('*', (req, res) => {
+
+// CATCH-ALL usando regex (escapa o uso de path-to-regexp)
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// --- Inicia o servidor ---
+// Inicia o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server rodando em http://localhost:${PORT}`);
