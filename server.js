@@ -180,7 +180,7 @@ app.get('/api/stock', async (req, res) => {
 
 // CATCH-ALL usando regex (escapa o uso de path-to-regexp)
 app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
 });
 
 // Serve estáticos da pasta /public
