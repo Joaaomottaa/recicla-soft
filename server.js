@@ -24,7 +24,7 @@ if (databaseUrl) {
     host:               process.env.MYSQLHOST     || '127.0.0.1',
     port:               process.env.MYSQLPORT     || 3306,
     user:               process.env.MYSQLUSER     || 'root',
-    password:           process.env.MYSQLPASSWORD || 'SUA_SENHA_LOCAL',
+    password:           process.env.MYSQLPASSWORD || 'SUA_NOVA_SENHA',
     database:           process.env.MYSQLDATABASE || 'recicla_soft',
     waitForConnections: true,
     connectionLimit:    10,
