@@ -1,5 +1,7 @@
 // server.js
 
+require('dotenv').config();   // só em dev, pra ler seu .env
+
 const express = require('express');
 const mysql   = require('mysql2/promise');
 const path    = require('path');
@@ -9,15 +11,25 @@ const app = express();
 app.use(express.json());
 
 
-// Configuração do pool MySQL
-const pool = mysql.createPool({
-  host:     '127.0.0.1',
-  user:     'root',
-  password: 'SUA_NOVA_SENHA',        // ou sua senha
-  database: 'recicla_soft',
-  waitForConnections: true,
-  connectionLimit: 10
-});
+// --- CONFIGURAÇÃO DO POOL --- 
+let pool;
+
+if (process.env.DATABASE_URL || process.env.MYSQL_URL) {
+  // em produção no Railway
+  const url = process.env.DATABASE_URL || process.env.MYSQL_URL;
+  pool = mysql.createPool(url);
+} else {
+  // em dev local ou se quiser setar variáveis separadas
+  pool = mysql.createPool({
+    host:     process.env.MYSQLHOST     || '127.0.0.1',
+    port:     process.env.MYSQLPORT     || 3306,
+    user:     process.env.MYSQLUSER     || 'root',
+    password: process.env.MYSQLPASSWORD || 'SUA_SENHA_LOCAL',
+    database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'recicla_soft',
+    waitForConnections: true,
+    connectionLimit:    10,
+  });
+}
 
 // --- Registro ---
 app.post('/api/register', async (req, res) => {
@@ -190,7 +202,12 @@ app.delete('/api/materials/:id', async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, 'docs')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get(/.*/,(req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 
 // Inicia o servidor
 const PORT = process.env.PORT || 3000;
