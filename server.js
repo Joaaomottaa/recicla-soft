@@ -8,20 +8,14 @@ const bcrypt  = require('bcrypt');
 const app = express();
 app.use(express.json());
 
-// Se você estiver servindo o frontend e API no mesmo domínio, não precisa de CORS.
-// Caso sirva frontend separado, descomente abaixo:
+// Se precisar servir seu front-end hospedado em outro domínio, descomente:
 // const cors = require('cors');
 // app.use(cors());
 
-// Conexão via URI única (definida em DATABASE_URL)
-const dbUrl = process.env.DATABASE_URL;
-if (!dbUrl) {
-  console.error('❌ Erro: DATABASE_URL não informada');
-  process.exit(1);
-}
+// Conexão via URI única (fallback para localhost se DATABASE_URL não estiver definida)
+const dbUrl = process.env.DATABASE_URL
+  || 'mysql://root:SUA_NOVA_SENHA@127.0.0.1:3306/recicla_soft';
 
-// A mysql2 aceita diretamente uma connection string:
-// ex: "mysql://root:senha@host:porta/database"
 const pool = mysql.createPool(dbUrl);
 
 // --- Registro ---
@@ -35,7 +29,7 @@ app.post('/api/register', async (req, res) => {
     );
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error('Erro no registro:', err);
     const msg = err.code === 'ER_DUP_ENTRY'
       ? 'Email já cadastrado'
       : 'Erro ao cadastrar';
@@ -57,7 +51,7 @@ app.post('/api/login', async (req, res) => {
 
     res.json({ success: true, userId: rows[0].user_id, name: rows[0].name });
   } catch (err) {
-    console.error(err);
+    console.error('Erro no login:', err);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 });
@@ -70,7 +64,7 @@ app.get('/api/materials', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao buscar materiais:', err);
     res.status(500).json({ error: 'Falha ao buscar materiais' });
   }
 });
@@ -85,7 +79,7 @@ app.post('/api/materials', async (req, res) => {
     );
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao adicionar material:', err);
     const msg = err.code === 'ER_DUP_ENTRY'
       ? 'Material já existe'
       : 'Falha ao adicionar';
@@ -104,7 +98,7 @@ app.put('/api/materials/:id', async (req, res) => {
     );
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao atualizar material:', err);
     res.status(500).json({ error: 'Falha ao atualizar' });
   }
 });
@@ -127,7 +121,7 @@ app.post('/api/sales', async (req, res) => {
     );
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao registrar venda:', err);
     res.status(500).json({ error: 'Falha ao registrar venda' });
   }
 });
@@ -153,7 +147,7 @@ app.get('/api/sales', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao buscar vendas:', err);
     res.status(500).json({ error: 'Falha ao buscar vendas' });
   }
 });
@@ -178,7 +172,7 @@ app.get('/api/stock', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao buscar estoque:', err);
     res.status(500).json({ error: 'Falha ao buscar estoque' });
   }
 });
@@ -190,12 +184,12 @@ app.delete('/api/materials/:id', async (req, res) => {
     await pool.query('DELETE FROM materials WHERE material_id = ?', [id]);
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao remover material:', err);
     res.status(500).json({ error: 'Não foi possível remover o material' });
   }
 });
 
-// Serve o frontend estático
+// Serve o front-end estático
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Inicia o servidor
