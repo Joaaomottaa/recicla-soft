@@ -1,7 +1,5 @@
 // server.js
 
-require('dotenv').config();   // só em dev, pra ler seu .env
-
 const express = require('express');
 const mysql   = require('mysql2/promise');
 const path    = require('path');
