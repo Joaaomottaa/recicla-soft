@@ -8,17 +8,12 @@ const bcrypt  = require('bcrypt');
 const app = express();
 app.use(express.json());
 
-// Se você precisar liberar CORS para um front-end em domínio diferente, descomente:
-// const cors = require('cors');
-// app.use(cors());
-
 // Conexão via URI única (ou fallback local)
 const dbUrl = process.env.DATABASE_URL
   || 'mysql://root:SUA_NOVA_SENHA@127.0.0.1:3306/recicla_soft';
-
 const pool = mysql.createPool(dbUrl);
 
-// --- Registro ---
+// --- Registro de usuário ---
 app.post('/api/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -48,7 +43,6 @@ app.post('/api/login', async (req, res) => {
     if (!rows.length) return res.status(400).json({ error: 'Credenciais inválidas' });
     const valid = await bcrypt.compare(password, rows[0].password);
     if (!valid)  return res.status(400).json({ error: 'Credenciais inválidas' });
-
     res.json({ success: true, userId: rows[0].user_id, name: rows[0].name });
   } catch (err) {
     console.error('Erro no login:', err);
@@ -103,6 +97,21 @@ app.put('/api/materials/:id', async (req, res) => {
   }
 });
 
+// --- Remover material ---
+app.delete('/api/materials/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query(
+      'DELETE FROM materials WHERE material_id = ?',
+      [id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erro ao remover material:', err);
+    res.status(500).json({ error: 'Não foi possível remover o material' });
+  }
+});
+
 // --- Registrar venda ---
 app.post('/api/sales', async (req, res) => {
   try {
@@ -112,7 +121,6 @@ app.post('/api/sales', async (req, res) => {
       [material]
     );
     if (!mat.length) return res.status(400).json({ error: 'Material não cadastrado' });
-
     await pool.query(
       `INSERT INTO sales
          (material_id, quantity_kg, total_price, sale_datetime, user_id)
@@ -177,27 +185,15 @@ app.get('/api/stock', async (req, res) => {
   }
 });
 
-// --- Remover material ---
-app.delete('/api/materials/:id', async (req, res) => {
-  const id = req.params.id;
-  try {
-    await pool.query('DELETE FROM materials WHERE material_id = ?', [id]);
-    res.json({ success: true });
-  } catch (err) {
-    console.error('Erro ao remover material:', err);
-    res.status(500).json({ error: 'Não foi possível remover o material' });
-  }
-});
-
-// Serve arquivos estáticos de /public
+// Serve estáticos da pasta /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Redireciona todas as outras rotas para o index.html (para client-side routing)
-app.get('*', (req, res) => {
+// Catch-all via regex (não gera erro no path-to-regexp)
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Inicia o servidor
+// Sobe o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server rodando em http://localhost:${PORT}`);
