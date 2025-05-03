@@ -8,11 +8,11 @@ const bcrypt  = require('bcrypt');
 const app = express();
 app.use(express.json());
 
-// Se precisar servir seu front-end hospedado em outro domínio, descomente:
+// Se você precisar liberar CORS para um front-end em domínio diferente, descomente:
 // const cors = require('cors');
 // app.use(cors());
 
-// Conexão via URI única (fallback para localhost se DATABASE_URL não estiver definida)
+// Conexão via URI única (ou fallback local)
 const dbUrl = process.env.DATABASE_URL
   || 'mysql://root:SUA_NOVA_SENHA@127.0.0.1:3306/recicla_soft';
 
@@ -189,8 +189,13 @@ app.delete('/api/materials/:id', async (req, res) => {
   }
 });
 
-// Serve o front-end estático
+// Serve arquivos estáticos de /public
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Redireciona todas as outras rotas para o index.html (para client-side routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Inicia o servidor
 const PORT = process.env.PORT || 3000;
