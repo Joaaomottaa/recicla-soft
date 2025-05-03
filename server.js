@@ -183,7 +183,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // CATCH-ALL usando regex (escapa o uso de path-to-regexp)
 app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Inicia o servidor
