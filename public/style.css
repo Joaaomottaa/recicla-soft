@@ -1,0 +1,351 @@
+/* public/style.css */
+
+/* ===== Reset ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Full-height layout ===== */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* ===== Fundo só na modal de login ===== */
+#loginModal {
+  background: url('https://uploaddeimagens.com.br/images/004/895/193/full/banner.png')
+              no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* ===== App Container ===== */
+.container {
+  display: flex;
+  min-height: 100%;
+  background-color: #ffffff;
+}
+
+/* ===== Sidebar (aperfeiçoada) ===== */
+.sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #a5d6a7 0%, #81c784 100%);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+}
+.greeting {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: #1b5e20;
+}
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.menu-item {
+  position: relative;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1b5e20;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+.menu-item:hover {
+  background: rgba(255,255,255,0.3);
+  color: #ffffff;
+}
+.menu-item.active {
+  background: #388e3c;
+  color: #ffffff;
+}
+.menu-item.active::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 50%;
+  background: #1b5e20;
+  border-radius: 4px 0 0 4px;
+}
+
+/* ===== Modal de Login/Cadastro ===== */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.box {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  text-align: center;
+}
+.box h2 {
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+.box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #c8e6c9;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.box button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  background: #388e3c;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.box button:hover {
+  background: #2e7d32;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.actions button {
+  background: none;
+  border: none;
+  color: #1b5e20;
+  cursor: pointer;
+  font-size: 14px;
+}
+.msg {
+  margin-top: 10px;
+  color: #d32f2f;
+  font-size: 14px;
+}
+
+/* ===== Login Header com ícones ===== */
+.login-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.login-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 12px;
+}
+.login-header h2 {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 1.5rem;
+  color: #2e7d32;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  margin: 0;
+}
+
+/* ===== Main Content & Views pós-login ===== */
+.content {
+  flex: 1;
+  padding: 30px;
+  min-height: 100%;
+  background: url('https://uploaddeimagens.com.br/images/004/895/223/full/fundo.png?1746039426')
+              no-repeat center top fixed;
+  background-size: cover;
+  color: #000;
+}
+.view {
+  display: none;
+}
+/* Título das views */
+.view h1 {
+  text-align: center;              /* centraliza o texto */
+  font-size: 2.5rem;               /* tamanho maior */
+  font-weight: 700;                /* negrito */
+  margin: 0 auto 24px;             /* espaço embaixo */
+  color: #2e7d32;                  /* tom verde escuro */
+  position: relative;
+  display: inline-block;
+  padding-bottom: 8px;             /* espaço para o underline */
+}
+
+#mainView h1::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 6px;
+  background-color: #388e3c;
+  border-radius: 3px;
+}
+
+.view h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+/* ===== Forms e tipografia ===== */
+.content,
+.content label,
+.content select,
+.content input,
+.content button,
+.content table,
+.content p {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 1rem;
+  color: #000;
+}
+.content label,
+.content th,
+.content td {
+  font-weight: 600;
+}
+.view label {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #1b5e20;
+}
+.view select,
+.view input[type="number"],
+.view input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #c8e6c9;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* ===== Buttons em grupo ===== */
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.buttons button {
+  flex: 1;
+  padding: 10px;
+  background: #388e3c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.buttons button:hover {
+  background: #2e7d32;
+}
+
+/* ===== Resultado do Cálculo ===== */
+#calcResult {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+/* ===== Tabela de Vendas ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+th, td {
+  border: 1px solid #c8e6c9;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+th {
+  background: #a5d6a7;
+  color: #1b5e20;
+}
+
+/* ===== Texto de preço atual ===== */
+#currentPrice {
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 600px) {
+  .sidebar {
+    display: none;
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+
+/* ===== Destaque para o resultado do cálculo e de registro ===== */
+/* ===== Resultado do Cálculo ===== */
+#calcResult {
+  display: none;                /* comece oculto */
+  margin-left: 16px;            /* espaço à esquerda, ficará inline */
+  padding: 8px 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #388e3c;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  vertical-align: middle;       /* alinha com os botões */
+}
+
+/* Quando for erro */
+#calcResult.error {
+  background-color: #d32f2f;
+}
+
+/* ===== Ícone de sucesso ao lado do texto ===== */
+.success-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.inventory-table th,
+.inventory-table td {
+  padding: 8px;
+  border: 1px solid #c8e6c9;
+  text-align: center;
+}
+.inventory-table th {
+  background: #a5d6a7;
+  color: #1b5e20;
+  font-weight: 600;
+}
