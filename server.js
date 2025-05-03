@@ -12,22 +12,15 @@ app.use(express.json());
 // --- CONFIGURAÇÃO DO POOL --- 
 let pool;
 
-if (process.env.DATABASE_URL || process.env.MYSQL_URL) {
-  // em produção no Railway
-  const url = process.env.DATABASE_URL || process.env.MYSQL_URL;
-  pool = mysql.createPool(url);
-} else {
-  // em dev local ou se quiser setar variáveis separadas
-  pool = mysql.createPool({
-    host:     process.env.MYSQLHOST     || '127.0.0.1',
-    port:     process.env.MYSQLPORT     || 3306,
-    user:     process.env.MYSQLUSER     || 'root',
-    password: process.env.MYSQLPASSWORD || 'SUA_SENHA_LOCAL',
-    database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'recicla_soft',
-    waitForConnections: true,
-    connectionLimit:    10,
-  });
-}
+const pool = mysql.createPool({
+  host:     process.env.MYSQLHOST,
+  port:     process.env.MYSQLPORT,
+  user:     process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  waitForConnections: true,
+  connectionLimit: 10
+});
 
 // --- Registro ---
 app.post('/api/register', async (req, res) => {
