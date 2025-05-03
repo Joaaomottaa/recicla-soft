@@ -8,22 +8,24 @@ const bcrypt  = require('bcrypt');
 const app = express();
 app.use(express.json());
 
-
 // --- CONFIGURAÇÃO DO POOL --- 
 let pool;
 
-if (process.env.DATABASE_URL || process.env.MYSQL_URL) {
-  // em produção no Railway
-  const url = process.env.DATABASE_URL || process.env.MYSQL_URL;
-  pool = mysql.createPool(url);
+// Em produção (Railway) a variável MYSQL_URL já estará definida:
+const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
+
+if (databaseUrl) {
+  // Conecta via URL única (Railway)
+  console.log('▶️  Conectando ao MySQL via URL:', databaseUrl);
+  pool = mysql.createPool(databaseUrl);
 } else {
-  // em dev local ou se quiser setar variáveis separadas
+  // Em desenvolvimento local, usa variáveis ou valores padrões:
   pool = mysql.createPool({
-    host:     process.env.MYSQLHOST     || '127.0.0.1',
-    port:     process.env.MYSQLPORT     || 3306,
-    user:     process.env.MYSQLUSER     || 'root',
-    password: process.env.MYSQLPASSWORD || 'SUA_SENHA_LOCAL',
-    database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'recicla_soft',
+    host:               process.env.MYSQLHOST     || '127.0.0.1',
+    port:               process.env.MYSQLPORT     || 3306,
+    user:               process.env.MYSQLUSER     || 'root',
+    password:           process.env.MYSQLPASSWORD || 'SUA_SENHA_LOCAL',
+    database:           process.env.MYSQLDATABASE || 'recicla_soft',
     waitForConnections: true,
     connectionLimit:    10,
   });
