@@ -178,13 +178,15 @@ app.get('/api/stock', async (req, res) => {
   }
 });
 
-// Serve estáticos da pasta /public
-app.use(express.static(path.join(__dirname, 'public')));
-
 // CATCH-ALL usando regex (escapa o uso de path-to-regexp)
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// Serve estáticos da pasta /public
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // Inicia o servidor
 const PORT = process.env.PORT || 3000;
