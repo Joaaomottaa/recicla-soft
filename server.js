@@ -8,16 +8,28 @@ const bcrypt  = require('bcrypt');
 const app = express();
 app.use(express.json());
 
+// --- CONFIGURAÇÃO DO POOL --- 
+let pool;
 
-// Configuração do pool MySQL
-const pool = mysql.createPool({
-  host:     '127.0.0.1',
-  user:     'root',
-  password: 'SUA_NOVA_SENHA',        // ou sua senha
-  database: 'recicla_soft',
-  waitForConnections: true,
-  connectionLimit: 10
-});
+// Em produção (Railway) a variável MYSQL_URL já estará definida:
+const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
+
+if (databaseUrl) {
+  // Conecta via URL única (Railway)
+  console.log('▶️  Conectando ao MySQL via URL:', databaseUrl);
+  pool = mysql.createPool(databaseUrl);
+} else {
+  // Em desenvolvimento local, usa variáveis ou valores padrões:
+  pool = mysql.createPool({
+    host:               process.env.MYSQLHOST     || '127.0.0.1',
+    port:               process.env.MYSQLPORT     || 3306,
+    user:               process.env.MYSQLUSER     || 'root',
+    password:           process.env.MYSQLPASSWORD || 'SUA_NOVA_SENHA',
+    database:           process.env.MYSQLDATABASE || 'recicla_soft',
+    waitForConnections: true,
+    connectionLimit:    10,
+  });
+}
 
 // --- Registro ---
 app.post('/api/register', async (req, res) => {
@@ -275,10 +287,16 @@ app.get('/api/summary', async (req, res) => {
 });
 
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'docs')));
+
+app.get(/.*/,(req, res) => {
+  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
+});
+
 
 // Inicia o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server rodando em http://localhost:${PORT}`);
 });
+
