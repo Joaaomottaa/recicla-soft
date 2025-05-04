@@ -473,5 +473,24 @@ img, video {
   vertical-align: middle;
 }
 
+/* ===== ícone WhatsApp flutuante ===== */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.whatsapp-float img {
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.whatsapp-float img:hover {
+  transform: scale(1.1);
+}
+
 
 

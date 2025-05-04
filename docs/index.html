@@ -84,7 +84,7 @@
         <li class="menu-item"       data-view="addView">Adicionar material</li>
         <li class="menu-item"       data-view="removeView">Remover material</li>
         <li class="menu-item" data-view="summaryView">Resumo Mensal</li>
-        <li class="menu-item"       id="btnLogout">Logout</li>
+        <li class="menu-item logout" id="btnLogout">Logout</li>
       </ul>
     </aside>
 
@@ -119,7 +119,7 @@
               <th>Material</th>
               <th>Qtd (kg)</th>
               <th>Total (R$)</th>
-              <th>Tipo</th>  
+              <th>Tipo</th>
               <th>Data/Hora</th>
             </tr>
           </thead>
@@ -188,20 +188,16 @@
         <div class="msg" id="removeMsg"></div>
       </section>
 
-      <!-- 6) Resumo -->
+      <!-- 7) Resumo Mensal -->
       <section id="summaryView" class="view" style="display:none;">
         <h1>Resumo Mensal</h1>
-      
         <label for="summaryMonth">Mês:</label>
         <input type="month" id="summaryMonth" />
-      
         <button id="btnLoadSummary" class="btn-summary">Carregar Resumo</button>
-      
         <div id="summaryCards" class="cards"></div>
       </section>
 
-       <!-- 6) Venda  -->
-
+      <!-- 8) Venda de Estoque -->
       <section id="sellView" class="view" style="display:none;">
         <h1>Venda de Estoque</h1>
         <label>
@@ -211,7 +207,7 @@
           </select>
         </label>
         <p id="sellAvailable">Disponível: 0 kg</p>
-      
+
         <label>
           Quantidade a Vender (kg):
           <input type="number" id="sellQuantity" min="0" step="0.01" />
@@ -220,11 +216,8 @@
           A quanto será vendido o KG?
           <small id="buyPriceInfo" class="info-text"></small>
           <input type="number" id="sellPricePerKg" min="0" step="0.01" />
-          
         </label>
-       
 
-      
         <div class="buttons">
           <button id="btnSellCalc">Calcular</button>
           <button id="btnConfirmSell" disabled>Confirmar Venda</button>
@@ -233,6 +226,16 @@
       </section>
 
     </main>
+  </div>
+
+  <!-- WhatsApp flutuante -->
+  <div class="whatsapp-float">
+    <a href="https://api.whatsapp.com/send?phone=5575998920162&text=Ol%C3%A1%21%20Gostaria%20de%20de%20mamar%C3%A7%C3%B5es." target="_blank" rel="noopener">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+        alt="WhatsApp"
+      />
+    </a>
   </div>
 
   <script defer src="script.js"></script>
