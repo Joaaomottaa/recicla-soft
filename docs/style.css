@@ -1,4 +1,7 @@
-/* public/style.css */
+/* === header móvel escondido por padrão === */
+.mobile-header {
+  display: none;
+}
 
 /* ===== Reset ===== */
 * {
@@ -7,49 +10,61 @@
   padding: 0;
 }
 
-/* ===== Full-height layout ===== */
+/* ===== Full-width layout ===== */
 html, body {
+  width: 100%;
   height: 100%;
-  margin: 0;
+  overflow-x: hidden;     /* impede scroll horizontal */
 }
 
 /* ===== Fundo só na modal de login ===== */
 #loginModal {
-  background: url('https://uploaddeimagens.com.br/images/004/895/193/full/banner.png')
-              no-repeat center center fixed;
+  background: url('https://uploaddeimagens.com.br/images/004/895/193/full/banner.png') no-repeat center center fixed;
   background-size: cover;
 }
 
 /* ===== App Container ===== */
 .container {
   display: flex;
+  width: 100%;
   min-height: 100%;
+  max-width: 100vw;       /* não ultrapassa a viewport */
+  overflow-x: hidden;     /* impede scroll horizontal */
   background-color: #ffffff;
 }
 
-/* ===== Sidebar (aperfeiçoada) ===== */
+/* ===== SIDEBAR FIXA LATERAL (DESKTOP) ===== */
 .sidebar {
-  width: 220px;
-  background: linear-gradient(180deg, #a5d6a7 0%, #81c784 100%);
-  padding: 30px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;           /* largura desktop */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 0 20px 20px 0;
+  background: linear-gradient(180deg, #a5d6a7 0%, #81c784 100%);
+  padding: 30px 20px;     /* padding desktop */
   box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  z-index: 900;
 }
+
+/* saudação */
 .greeting {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 30px;
   color: #1b5e20;
 }
+
+/* menu */
 .menu {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 .menu-item {
-  position: relative;
   padding: 12px 16px;
   margin-bottom: 12px;
   border-radius: 8px;
@@ -67,17 +82,6 @@ html, body {
   background: #388e3c;
   color: #ffffff;
 }
-.menu-item.active::before {
-  content: '';
-  position: absolute;
-  left: -6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 50%;
-  background: #1b5e20;
-  border-radius: 4px 0 0 4px;
-}
 
 /* ===== Modal de Login/Cadastro ===== */
 .modal {
@@ -89,21 +93,25 @@ html, body {
   justify-content: center;
   z-index: 10;
 }
-.box {
+.modal .box {
   background: #ffffff;
   border-radius: 8px;
   padding: 20px;
-  width: 90%;
-  max-width: 360px;
+  width: 90%;             /* usa 90% da largura da viewport */
+  max-width: 360px;       /* mantém max original */
+  max-height: 90vh;       /* não ultrapassa 90% da altura da viewport */
+  overflow-y: auto;       /* rola internamente se for muito alto */
+  margin: 0 1rem;         /* padding extra nas laterais */
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   text-align: center;
 }
-.box h2 {
-  color: #2e7d32;
-  margin-bottom: 15px;
+.box h2 { color: #2e7d32; margin-bottom: 15px; }
+.box input,
+.box button {
+  width: 100%;
+  box-sizing: border-box; /* garante largura correta */
 }
 .box input {
-  width: 100%;
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #c8e6c9;
@@ -111,7 +119,6 @@ html, body {
   font-size: 14px;
 }
 .box button {
-  width: 100%;
   padding: 10px;
   margin-top: 5px;
   background: #388e3c;
@@ -122,9 +129,7 @@ html, body {
   cursor: pointer;
   transition: background 0.2s;
 }
-.box button:hover {
-  background: #2e7d32;
-}
+.box button:hover { background: #2e7d32; }
 .actions {
   display: flex;
   justify-content: space-between;
@@ -160,34 +165,34 @@ html, body {
   font-size: 1.5rem;
   color: #2e7d32;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  margin: 0;
 }
 
-/* ===== Main Content & Views pós-login ===== */
+/* ===== Conteúdo (DESKTOP) ===== */
 .content {
   flex: 1;
+  margin-left: 220px;      /* recuo desktop */
   padding: 30px;
-  min-height: 100%;
-  background: url('https://uploaddeimagens.com.br/images/004/895/223/full/fundo.png?1746039426')
-              no-repeat center top fixed;
+  max-width: 100vw;        /* não ultrapassa a viewport */
+  overflow-x: auto;        /* scroll horizontal só se necessário */
+  background: url('https://uploaddeimagens.com.br/images/004/895/223/full/fundo.png?1746039426') no-repeat center top fixed;
   background-size: cover;
-  color: #000;
-}
-.view {
-  display: none;
-}
-/* Título das views */
-.view h1 {
-  text-align: center;              /* centraliza o texto */
-  font-size: 2.5rem;               /* tamanho maior */
-  font-weight: 700;                /* negrito */
-  margin: 0 auto 24px;             /* espaço embaixo */
-  color: #2e7d32;                  /* tom verde escuro */
-  position: relative;
-  display: inline-block;
-  padding-bottom: 8px;             /* espaço para o underline */
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  padding-top: 0;
 }
 
+/* ===== Views ===== */
+.view { display: none; }
+.view h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 auto 24px;
+  color: #2e7d32;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 8px;
+}
 #mainView h1::after {
   content: "";
   position: absolute;
@@ -200,15 +205,7 @@ html, body {
   border-radius: 3px;
 }
 
-.view h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-  color: #000;
-}
-
-/* ===== Forms e tipografia ===== */
-.content,
+/* ===== Forms e Tipografia ===== */
 .content label,
 .content select,
 .content input,
@@ -230,9 +227,8 @@ html, body {
   font-size: 16px;
   color: #1b5e20;
 }
-.view select,
-.view input[type="number"],
-.view input[type="text"] {
+.view input,
+.view select {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
@@ -241,7 +237,7 @@ html, body {
   font-size: 14px;
 }
 
-/* ===== Buttons em grupo ===== */
+/* ===== Botões ===== */
 .buttons {
   display: flex;
   gap: 10px;
@@ -259,20 +255,33 @@ html, body {
   cursor: pointer;
   transition: background 0.2s;
 }
-.buttons button:hover {
-  background: #2e7d32;
-}
+.buttons button:hover { background: #2e7d32; }
 
-/* ===== Resultado do Cálculo ===== */
+/* ===== Resultado ===== */
 #calcResult {
+  display: none;
   margin-top: 20px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #1b5e20;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #388e3c;    
+  padding: 8px 16px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+#sellCalcResult.error {
+  background-color: #d32f2f;      /* cartão vermelho em erro */
 }
 
-/* ===== Tabela de Vendas ===== */
-table {
+.success-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ===== Tabelas ===== */
+table, .inventory-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
@@ -287,65 +296,183 @@ th {
   background: #a5d6a7;
   color: #1b5e20;
 }
-
-/* ===== Texto de preço atual ===== */
 #currentPrice {
   margin-bottom: 15px;
   font-weight: bold;
   color: #1b5e20;
 }
 
-/* ===== Responsividade ===== */
-@media (max-width: 600px) {
-  .sidebar {
-    display: none;
-  }
-  .container {
-    flex-direction: column;
-  }
+/* ===== Imagens e vídeos fluidos ===== */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
-/* ===== Destaque para o resultado do cálculo e de registro ===== */
-/* ===== Resultado do Cálculo ===== */
-#calcResult {
-  display: none;                /* comece oculto */
-  margin-left: 16px;            /* espaço à esquerda, ficará inline */
-  padding: 8px 16px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #ffffff;
-  background-color: #388e3c;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  vertical-align: middle;       /* alinha com os botões */
+/* ===== realça a linha de total na tabela de estoque ===== */
+.total-row td {
+  border-top: 2px solid #1b5e20;
+  padding-top: 10px;
 }
 
-/* Quando for erro */
-#calcResult.error {
-  background-color: #d32f2f;
+/* ===== Cards para Resumo Mensal ===== */
+/* ===== Cards de Resumo ===== */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
 }
-
-/* ===== Ícone de sucesso ao lado do texto ===== */
-.success-icon {
-  width: 24px;
-  height: 24px;
-  vertical-align: middle;
-  margin-left: 6px;
-}
-
-.inventory-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 16px;
-}
-.inventory-table th,
-.inventory-table td {
-  padding: 8px;
-  border: 1px solid #c8e6c9;
+.card {
+  flex: 1 1 140px;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   text-align: center;
 }
-.inventory-table th {
-  background: #a5d6a7;
+.card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
   color: #1b5e20;
+}
+/* valor principal */
+.card p {
+  font-size: 1.3rem;
+  margin: 0.2rem 0;
   font-weight: 600;
 }
+/* data e material em fonte menor */
+.card small {
+  display: block;
+  font-size: 0.85rem;
+  color: #1b5e20;
+  margin-top: 0.25rem;
+}
+
+/* ===== Ajustes apenas no mobile (<600px) ===== */
+@media (max-width: 600px) {
+  /* Header móvel */
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    height: 56px;
+    background: linear-gradient(180deg, #a5d6a7 0%, #81c784 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1002;
+  }
+  .mobile-header-left { display: flex; align-items: center; }
+  .mobile-logo { width: 32px; height: 32px; }
+  .mobile-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1b5e20;
+    margin-left: 0.5rem;
+  }
+  .mobile-menu-icon { width: 24px; height: 24px; cursor: pointer; }
+
+  /* Sidebar móvel */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;           /* largura desktop */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #a5d6a7 0%, #81c784 100%);
+    padding: 30px 20px;     /* padding desktop */
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);  
+    z-index: 900;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .sidebar.open ~ .content {
+    margin-left: 154px;
+  }
+
+  /* Conteúdo móvel */
+  .content {
+    margin-left: 0;
+    padding: 1rem;
+    padding-top: 100px;       /* espaço para header + possível título */
+    transition: margin-left 0.3s ease;
+    overflow-x: auto;         /* scroll horizontal se necessário */
+  }
+
+  /* Tabelas roláveis */
+  .content table,
+  .inventory-table {
+    display: block;
+    width: auto;
+    min-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+.btn-summary {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: #388e3c;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-summary:hover {
+  background: #2e7d32;
+}
+
+.info-text {
+  display: block;
+  font-size: 0.8rem;
+  color: #000000;
+  margin-bottom: 12px;
+}
+
+/* ===== Venda de Estoque – mensagem “Total disponível” ===== */
+#sellAvailable {
+  margin: -2px 0 8px;      /* sem espaçamento acima, 8px abaixo */
+  font-size: 0.8rem;
+  color: #000000;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+/* ===== Resultado Venda de Estoque – mesmo estilo do calcResult ===== */
+#sellCalcResult {
+  display: none;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #388e3c;      /* verde */
+  padding: 8px 16px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+#sellCalcResult.error {
+  background-color: #d32f2f;      /* vermelho em erro */
+}
+
+/* garante que o ícone de ✓ também fique do mesmo jeito */
+#sellCalcResult .success-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+
+
