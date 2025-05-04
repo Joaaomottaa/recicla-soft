@@ -8,28 +8,16 @@ const bcrypt  = require('bcrypt');
 const app = express();
 app.use(express.json());
 
-// --- CONFIGURAÇÃO DO POOL --- 
-let pool;
 
-// Em produção (Railway) a variável MYSQL_URL já estará definida:
-const databaseUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
-
-if (databaseUrl) {
-  // Conecta via URL única (Railway)
-  console.log('▶️  Conectando ao MySQL via URL:', databaseUrl);
-  pool = mysql.createPool(databaseUrl);
-} else {
-  // Em desenvolvimento local, usa variáveis ou valores padrões:
-  pool = mysql.createPool({
-    host:               process.env.MYSQLHOST     || '127.0.0.1',
-    port:               process.env.MYSQLPORT     || 3306,
-    user:               process.env.MYSQLUSER     || 'root',
-    password:           process.env.MYSQLPASSWORD || 'SUA_NOVA_SENHA',
-    database:           process.env.MYSQLDATABASE || 'recicla_soft',
-    waitForConnections: true,
-    connectionLimit:    10,
-  });
-}
+// Configuração do pool MySQL
+const pool = mysql.createPool({
+  host:     '127.0.0.1',
+  user:     'root',
+  password: 'SUA_NOVA_SENHA',        // ou sua senha
+  database: 'recicla_soft',
+  waitForConnections: true,
+  connectionLimit: 10
+});
 
 // --- Registro ---
 app.post('/api/register', async (req, res) => {
@@ -202,16 +190,95 @@ app.delete('/api/materials/:id', async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, 'docs')));
+// --- Resumo Mensal (atualizado) ---
+app.get('/api/summary', async (req, res) => {
+  try {
+    const userId = parseInt(req.query.userId, 10);
+    const month  = req.query.month; // “YYYY‑MM”
+    if (!userId || !month) {
+      return res.status(400).json({ error: 'userId e month são obrigatórios' });
+    }
 
-app.get(/.*/,(req, res) => {
-  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
+    // define início e fim do mês
+    const start = `${month}-01 00:00:00`;
+    // calcula fim do mês
+    const endDate = new Date(`${month}-01`);
+    endDate.setMonth(endDate.getMonth() + 1);
+    endDate.setSeconds(endDate.getSeconds() - 1);
+    const end = endDate.toISOString().slice(0,19).replace('T',' ');
+
+    const conn = await pool.getConnection();
+
+    // 1) Material mais vendido (somando apenas saídas)
+    const [[mostSold]] = await conn.query(`
+      SELECT m.name AS material,
+             SUM(ABS(s.quantity_kg)) AS quantity
+      FROM sales s
+      JOIN materials m ON s.material_id = m.material_id
+      WHERE s.user_id = ? AND s.sale_datetime BETWEEN ? AND ?
+        AND s.quantity_kg < 0
+      GROUP BY m.name
+      ORDER BY SUM(ABS(s.quantity_kg)) DESC
+      LIMIT 1
+    `, [userId, start, end]);
+
+    // 2) Maior venda individual (total_price > 0)
+    const [[highestSale]] = await conn.query(`
+      SELECT m.name       AS material,
+             s.total_price AS total,
+             s.sale_datetime AS date
+      FROM sales s
+      JOIN materials m ON s.material_id = m.material_id
+      WHERE s.user_id = ? AND s.sale_datetime BETWEEN ? AND ?
+        AND s.total_price > 0
+      ORDER BY s.total_price DESC
+      LIMIT 1
+    `, [userId, start, end]);
+
+    // 3) Contagem de vendas (total_price > 0)
+    const [[{ salesCount }]] = await conn.query(`
+      SELECT COUNT(*) AS salesCount
+      FROM sales
+      WHERE user_id = ? AND sale_datetime BETWEEN ? AND ?
+        AND total_price > 0
+    `, [userId, start, end]);
+
+    // 4) Total de Gastos (compras: total_price < 0)
+    const [[{ totalExpenses }]] = await conn.query(`
+      SELECT -COALESCE(SUM(total_price),0) AS totalExpenses
+      FROM sales
+      WHERE user_id = ? AND sale_datetime BETWEEN ? AND ?
+        AND total_price < 0
+    `, [userId, start, end]);
+
+    // 5) Faturamento (vendas: total_price > 0)
+    const [[{ revenue }]] = await conn.query(`
+      SELECT COALESCE(SUM(total_price),0) AS revenue
+      FROM sales
+      WHERE user_id = ? AND sale_datetime BETWEEN ? AND ?
+        AND total_price > 0
+    `, [userId, start, end]);
+
+    conn.release();
+
+    res.json({
+      mostSold:       mostSold   || { material:null, quantity:0 },
+      highestSale:    highestSale|| { material:null, total:0, date:null },
+      salesCount:     salesCount || 0,
+      totalExpenses:  totalExpenses,
+      revenue:        revenue
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Falha ao gerar resumo mensal' });
+  }
 });
 
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Inicia o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server rodando em http://localhost:${PORT}`);
 });
-
