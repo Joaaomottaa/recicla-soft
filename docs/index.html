@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Montserrat -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-    rel="stylesheet"
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" 
+  rel="stylesheet">
   />
 
   <title>Recicla-Soft</title>
@@ -92,7 +91,17 @@
     <main class="content">
       <!-- 1) Tela Principal -->
       <section id="mainView" class="view">
-        <h1>Compra de materiais</h1>
+        <div class="view-header">
+          <h1>Compra de materiais</h1>
+          <div class="page-header">
+            <img
+              src="https://w7.pngwing.com/pngs/653/231/png-transparent-recycling-symbol-graphics-recycling-bin-non-recyclable-icon-angle-leaf-text.png"
+              alt="Logo Recicla-Soft"
+              class="site-logo"
+            />
+            <span class="site-title">Recicla-Soft</span>
+          </div>
+        </div>
         <label>
           Material:
           <select id="materialSelect">
@@ -230,13 +239,37 @@
 
   <!-- WhatsApp flutuante -->
   <div class="whatsapp-float">
-    <a href="https://api.whatsapp.com/send?phone=5575998920162&text=Ol%C3%A1%21%20Gostaria%20de%20de%20mamar%C3%A7%C3%B5es." target="_blank" rel="noopener">
+    <a href="https://api.whatsapp.com/send?phone=5575998920162&text=Ol%C3%A1%21%20Gostaria%20de%20%20%C3%A7%C3%B5es." target="_blank" rel="noopener">
       <img
         src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
         alt="WhatsApp"
       />
     </a>
   </div>
+
+  <div id="chat-toggle" class="chat-toggle">
+    <img src="https://cdn-icons-png.freepik.com/512/12383/12383841.png" alt="Abrir Chat Bot Recicla-Soft" />
+  </div>
+
+  <!-- Widget de Chat -->
+<div id="chat-widget" class="chat-widget">
+  <div class="chat-header">
+    <img
+      src="https://i.ibb.co/461Gw4C/7af0b645-ac68-4509-8a57-ce010c7694da.png"
+      alt="Bot Recicla‑Soft"
+      class="chat-logo"
+    />
+    <span>Bot Recicla‑Soft</span>
+    <button id="chat-close">×</button>
+  </div>
+  <div id="chat-body" class="chat-body">
+    <div class="message bot">Olá! Eu sou o Bot Recicla‑Soft. Como posso ajudar?</div>
+  </div>
+  <div class="chat-input">
+    <input id="chat-input" type="text" placeholder="Escreva algo..." />
+    <button id="chat-send">▶</button>
+  </div>
+</div>
 
   <script defer src="script.js"></script>
 </body>

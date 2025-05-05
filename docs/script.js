@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginModal   = document.getElementById('loginModal');
   const appContainer = document.getElementById('appContainer');
   const greetingEl   = document.getElementById('greeting');
+  const toggleBtn = document.getElementById('chat-toggle');
+  const widget   = document.getElementById('chat-widget');
+  const closeBtn = document.getElementById('chat-close');
+  const sendBtn  = document.getElementById('chat-send');
+  const inputEl  = document.getElementById('chat-input');
+  const bodyEl   = document.getElementById('chat-body');
+
+toggleBtn.onclick = () => widget.style.display = 'flex';
+closeBtn.onclick  = () => widget.style.display = 'none';
 
   // add summaryView reference
   const views = {
@@ -100,7 +109,118 @@ document.addEventListener('DOMContentLoaded', () => {
   const removeSelect = document.getElementById('removeSelect');
   const btnRemove    = document.getElementById('btnRemove');
   const removeMsg    = document.getElementById('removeMsg');
- 
+  
+  function appendMessage(text, fromUser = false) {
+    const msg = document.createElement('div');
+    msg.classList.add('message', fromUser ? 'user' : 'bot');
+    if (fromUser) {
+      msg.innerText = text;
+    } else {
+      msg.innerHTML = text;        // usa innerHTML para permitir <a> clicável
+    }
+    bodyEl.appendChild(msg);
+    bodyEl.scrollTop = bodyEl.scrollHeight;
+  }
+
+  function getBotReply(txt) {
+    txt = txt.toLowerCase();
+  
+    // Preço
+    if (txt.includes('preço')) {
+      return 'O preço atual de qualquer material é R$ 2,50 por kg.';
+    }
+  
+    // Compras
+    if (txt.includes('comprar') || txt.includes('compra')) {
+      return 'Para registrar uma compra, acesse "Compra de Material", escolha o item, informe quantidade e clique em "Registrar compra".';
+    }
+  
+    // Vendas
+    if (txt.includes('vender') || txt.includes('venda')) {
+      return 'Para vender, vá em "Venda de Estoque", selecione o material, informe quantidade e clique em "Registrar venda".';
+    }
+  
+    // Estoque
+    if (txt.includes('estoque')) {
+      return 'Atualmente você tem 120 kg disponíveis no estoque.';
+    }
+  
+    // Adicionar material
+    if (txt.includes('adicionar') || txt.includes('adiciona')) {
+      return 'Em "Adicionar material", preencha nome e preço e clique em "Salvar".';
+    }
+  
+    // Alterar valor
+    if (txt.includes('alterar') || txt.includes('atualizar')) {
+      return 'Em "Alterar valor do material", escolha o item, insira o novo preço e confirme.';
+    }
+  
+    // Remover material
+    if (txt.includes('remover') || txt.includes('apagar') || txt.includes('deletar')) {
+      return 'Em "Remover material", selecione o item e clique em "Remover". Atenção: ação irreversível.';
+    }
+  
+    // Relatórios
+    if (txt.includes('relatório') || txt.includes('relatorio') ) {
+      return 'Você encontra os relatórios em "Relatório de materiais" → clique em "Gerar relatório".';
+    }
+  
+    // Resumo mensal
+    if (txt.includes('resumo')) {
+      return 'O resumo mensal está em "Resumo Mensal": lá aparecem totais de compras e vendas.';
+    }
+  
+    // Material mais reciclado
+    if (txt.includes('mais reciclado')) {
+      return 'No último mês o material mais reciclado foi o PET, com 45 kg.';
+    }
+  
+    // Ajuda / Suporte
+    if (txt.includes('ajuda')) {
+      return 'Claro! Pergunte sobre compras, vendas, estoque, relatórios ou adição/removal de materiais.';
+    }
+    if (txt.includes('suporte')) {
+      return 'Para falar com nosso suporte humano, envie e‑mail para suporte@recicla‑soft.com.br.';
+    }
+
+    if (txt.includes('contratar') || txt.includes('informacao')) {
+  return `
+    Para contratar nossos serviços ou saber mais informações, 
+    <a href="https://api.whatsapp.com/send?phone=5575998920162&text=Ol%C3%A1!%20Gostaria%20de%20maiores%20informa%C3%A7%C3%B5es." 
+       target="_blank" 
+       rel="noopener"
+       style="color: #066; text-decoration: underline;">
+      clique aqui para falar no WhatsApp
+    </a>.
+  `;
+}
+  
+    // Saudações
+    if (/^(oi|olá|bom dia|boa tarde|boa noite)/.test(txt)) {
+      return 'Olá! Eu sou o Bot Recicla‑Soft. Em que posso ajudar hoje?';
+    }
+  
+    // Se nada bater
+    return 'Desculpe, não entendi. Tente palavras como "preço", "adicionar", "vender" ou "estoque".';
+  }
+  
+
+  
+  
+  sendBtn.onclick = () => {
+    const txt = inputEl.value.trim();
+    if (!txt) return;
+    appendMessage(txt, true);
+    inputEl.value = '';
+    setTimeout(() => appendMessage(getBotReply(txt)), 300);
+  }
+
+    inputEl.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendBtn.click();
+      }
+    });
 
   // === View switcher ===
   function showView(viewId) {
@@ -117,38 +237,56 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // === Data loaders ===
-  async function loadMaterials() {
-    console.log('⏳ loadMaterials()');
-    materialSelect.innerHTML  = '<option disabled>Carregando...</option>';
-    alterSelect.innerHTML     = '<option disabled>Carregando...</option>';
-    removeSelect.innerHTML    = '<option disabled>Carregando...</option>';
-    currentPriceEl.innerText  = 'Preço atual: R$ 0,00';
+async function loadMaterials() {
+  console.log('⏳ loadMaterials()');
 
-    const resp = await fetch('/api/materials');
-    const list = await resp.json();
+  // Feedback visual enquanto carrega
+  materialSelect.innerHTML      = '<option disabled>Carregando...</option>';
+  sellMaterialSelect.innerHTML  = '<option disabled>Carregando...</option>';
+  alterSelect.innerHTML         = '<option disabled>Carregando...</option>';
+  removeSelect.innerHTML        = '<option disabled>Carregando...</option>';
+  currentPriceEl.innerText      = 'Preço atual: R$ 0,00';
 
-    materialPricesByName = {};
-    materialPricesById   = {};
-
-    materialSelect.innerHTML = '<option value="" disabled selected>-- Escolha um material --</option>';
-    alterSelect.innerHTML    = '<option value="" disabled selected>-- Escolha um material --</option>';
-    removeSelect.innerHTML   = '<option value="" disabled selected>-- Escolha um material --</option>';
-
-    list.forEach(m => {
-      const price = parseFloat(m.price_per_kg);
-      materialPricesByName[m.name]      = price;
-      materialPricesById[m.material_id] = price;
-    // opção de compra
-    materialSelect.innerHTML += `<option value="${m.name}">${m.name} (R$ ${price.toFixed(2)}/kg)</option>`;
-    // opção de venda
-    sellMaterialSelect.innerHTML += `<option value="${m.name}">${m.name}</option>`;
-    // opção de alterar
-    alterSelect.innerHTML    += `<option value="${m.material_id}">${m.name}</option>`;
-    // opção de remover
-    removeSelect.innerHTML   += `<option value="${m.material_id}">${m.name}</option>`;
-    });
-    console.log('✅ loadMaterials concluído');
+  // Passa o userId na query para o servidor trazer só
+  // os materiais globais (user_id IS NULL) + os seus (user_id = currentUserId)
+  const resp = await fetch(`/api/materials?userId=${currentUserId}`);
+  if (!resp.ok) {
+    console.error('Falha ao buscar materiais:', resp.status, resp.statusText);
+    materialSelect.innerHTML = '<option disabled>Erro ao carregar materiais</option>';
+    return;
   }
+
+  const list = await resp.json();
+
+  // Resetar dicionários
+  materialPricesByName = {};
+  materialPricesById   = {};
+
+  // Limpar selects e setar placeholder
+  materialSelect.innerHTML      = '<option value="" disabled selected>-- Escolha um material --</option>';
+  sellMaterialSelect.innerHTML  = '<option value="" disabled selected>-- Escolha um material --</option>';
+  alterSelect.innerHTML         = '<option value="" disabled selected>-- Escolha um material --</option>';
+  removeSelect.innerHTML        = '<option value="" disabled selected>-- Escolha um material --</option>';
+
+  // Preencher opções
+  list.forEach(m => {
+    const price = parseFloat(m.price_per_kg);
+    materialPricesByName[m.name]      = price;
+    materialPricesById[m.material_id] = price;
+
+    materialSelect.innerHTML      += `<option value="${m.name}">${m.name} (R$ ${price.toFixed(2)}/kg)</option>`;
+    sellMaterialSelect.innerHTML  += `<option value="${m.name}">${m.name}</option>`;
+    alterSelect.innerHTML         += `<option value="${m.material_id}">${m.name}</option>`;
+    removeSelect.innerHTML        += `<option value="${m.material_id}">${m.name}</option>`;
+  });
+
+  console.log('✅ loadMaterials concluído');
+}
+
+  
+
+
+  
 
   alterSelect.addEventListener('change', () => {
     const id    = alterSelect.value;
@@ -286,8 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmSell.disabled = false;
   });
   
-  
-
   btnConfirmSell.addEventListener('click', async () => {
     const material   = sellMaterialSelect.value;
     const rawQty     = parseFloat(sellQuantity.value);
@@ -363,7 +499,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // calcula lucro
     const profit = data.revenue - data.totalExpenses;
-  
     summaryCards.innerHTML = `
       <div class="card">
         <h2>Mais Vendido</h2>
@@ -517,26 +652,48 @@ btnRegSale.addEventListener('click', async () => {
 });
 
 
-  // === Alter material ===
-  btnAlter.addEventListener('click', async () => {
-    const id    = alterSelect.value;
-    const price = parseFloat(alterPrice.value);
-    if (!id || isNaN(price)) {
-      alterMsg.innerText = 'Selecione material e informe preço.';
-      return;
-    }
+ // === Alterar valor do material ===
+btnAlter.addEventListener('click', async () => {
+  const id    = alterSelect.value;
+  const price = parseFloat(alterPrice.value);
+
+  // Validação básica
+  if (!id || isNaN(price)) {
+    alterMsg.style.color = '#d32f2f';
+    alterMsg.innerText   = 'Selecione material e informe preço.';
+    return;
+  }
+
+  try {
+    // Envia price + userId no JSON
     const resp = await fetch(`/api/materials/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ price })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        price,
+        userId: currentUserId
+      })
     });
     const data = await resp.json();
-    alterMsg.innerText = data.success ? 'Preço atualizado!' : data.error;
-    if (data.success) {
-      await loadMaterials();
-      setTimeout(() => alterMsg.innerText = '', 1500);
+
+    if (resp.ok && data.success) {
+      // Sucesso
+      alterMsg.style.color = '#1b5e20';
+      alterMsg.innerText   = 'Preço atualizado!';
+      await loadMaterials();                  // recarrega a lista
+      setTimeout(() => { alterMsg.innerText = ''; }, 1500);
+    } else {
+      // Erro retornado pela API
+      alterMsg.style.color = '#d32f2f';
+      alterMsg.innerText   = `Erro: ${data.error || resp.statusText}`;
     }
-  });
+  } catch (err) {
+    // Erro de rede / fetch
+    console.error('Erro ao atualizar material:', err);
+    alterMsg.style.color = '#d32f2f';
+    alterMsg.innerText   = 'Erro inesperado ao atualizar';
+  }
+});
 
   // === Add material ===
   btnAdd.addEventListener('click', async () => {
@@ -549,34 +706,53 @@ btnRegSale.addEventListener('click', async () => {
     const resp = await fetch('/api/materials', {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ name, price })
+      body: JSON.stringify({ name, price, userId: currentUserId })
     });
-    const data = await resp.json();
-    addMsg.innerText = data.success ? 'Material adicionado!' : data.error;
-    if (data.success) {
-      await loadMaterials();
-      setTimeout(() => addMsg.innerText = '', 1500);
-    }
-  });
-
-  // === Remove material ===
-  btnRemove.addEventListener('click', async () => {
-    const id = removeSelect.value;
-    if (!id) {
-      removeMsg.innerText = 'Selecione um material';
+  
+    if (!resp.ok) {
+      // exibe a mensagem de erro vinda do servidor
+      const err = await resp.json().catch(() => ({}));
+      addMsg.style.color = '#d32f2f';
+      addMsg.innerText = err.error || 'Falha ao adicionar';
       return;
     }
-    const resp = await fetch(`/api/materials/${id}`, { method: 'DELETE' });
+  
+    addMsg.style.color = '#1b5e20';
+    addMsg.innerText = 'Material adicionado!';
+    await loadMaterials();
+    setTimeout(() => addMsg.innerText = '', 1500);
+  });
+
+// === Remove material ===
+btnRemove.addEventListener('click', async () => {
+  const id = removeSelect.value;
+  if (!id) {
+    removeMsg.style.color = '#d32f2f';
+    removeMsg.innerText = 'Selecione um material';
+    return;
+  }
+
+  try {
+    const resp = await fetch(`/api/materials/${id}?userId=${currentUserId}`, {
+      method: 'DELETE'
+    });
     const data = await resp.json();
-    if (data.success) {
+
+    if (resp.ok && data.success) {
       removeMsg.style.color = '#1b5e20';
       removeMsg.innerText   = 'Material removido com sucesso';
       await loadMaterials();
     } else {
+      // se o servidor devolveu 400 ou outro erro de aplicação
       removeMsg.style.color = '#d32f2f';
-      removeMsg.innerText   = `Erro: ${data.error}`;
+      removeMsg.innerText   = `Erro: ${data.error || resp.statusText}`;
     }
-  });
+  } catch (err) {
+    console.error('Erro ao chamar DELETE /api/materials/:id', err);
+    removeMsg.style.color = '#d32f2f';
+    removeMsg.innerText   = 'Erro inesperado ao remover material';
+  }
+});
 
   // === Initialize ===
   loginModal.style.display   = 'flex';
