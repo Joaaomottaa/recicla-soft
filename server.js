@@ -363,7 +363,7 @@ app.get('/api/summary', async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'docs')));
 
 // Inicia o servidor
 const PORT = process.env.PORT || 3000;
