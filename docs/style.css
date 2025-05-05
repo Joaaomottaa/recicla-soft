@@ -368,36 +368,6 @@ img, video {
 /* ===== Ajustes apenas no mobile (<600px) ===== */
 @media (max-width: 600px) {
 
-  .view-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  /* Título menor no mobile */
-  .view-header h1 {
-    font-size: 1.0rem;    /* de 2.5rem para algo mais compacto */
-    padding-bottom: 6px;  /* ajusta underline */
-  }
-  #mainView h1::after {
-    height: 4px;          /* linha mais fina */
-    width: 50%;           /* largura relativa */
-  }
-
-  /* Logo e texto do site também ficam menores */
-  .page-header {
-    gap: 0.25rem;
-  }
-  .site-logo {
-    width: 24px;
-    height: 24px;
-  }
-  .site-title {
-    font-size: 1.1rem;    /* de 1.4rem para menos */
-  }
-
-
   /* Header móvel */
   .mobile-header {
     display: flex;
@@ -415,7 +385,6 @@ img, video {
   .mobile-header-left { display: flex; align-items: center; }
   .mobile-logo { width: 32px; height: 32px; }
   .mobile-title {
-    font-family: 'Montserrat', sans-serif;
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--text-default);
@@ -426,33 +395,75 @@ img, video {
   /* Sidebar móvel */
   .sidebar {
     position: fixed;
-    top: 56px;               /* abaixo do header móvel */
-    left: -154px;            /* escondida inicialmente */
+    top: 56px;
+    left: -154px;
     width: 154px;
     height: calc(100% - 56px);
-    padding: 30px 15px;
+    padding: 20px 15px;
     background: var(--sidebar-bg);
     box-shadow: 2px 0 8px rgba(0,0,0,0.1);
     transition: left 0.3s ease;
     z-index: 1001;
+    display: flex;
+    flex-direction: column;
   }
   .sidebar.open {
     left: 0;
   }
+  /* faz o conteúdo avançar junto */
   .sidebar.open ~ .content {
     margin-left: 154px;
   }
 
-  /* Conteúdo móvel */
+  /* faz o <ul> ocupar todo o espaço da sidebar */
+  .sidebar .menu {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* itens mais compactos para caber tudo */
+  .menu-item {
+    font-size: 0.9rem;    /* menor para caber */
+    padding: 8px 12px;    /* reduzido */
+    margin-bottom: 8px;   /* reduzido */
+  }
+
+  /* logout sempre embaixo */
+  .menu-item.logout {
+    margin-top: auto;
+  }
+
+  /* Conteúdo móvel reajustado */
   .content {
     margin-left: 0;
     padding: 1rem;
-    padding-top: 100px;       /* espaço para header + possível título */
+    padding-top: 100px;  /* espaço para header + possível título */
     transition: margin-left 0.3s ease;
-    overflow-x: auto;         /* scroll horizontal se necessário */
   }
 
-  /* Tabelas roláveis */
+  /* títulos e h1 ajustados */
+  .view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .view-header h1 {
+    font-size: 1.6rem;
+    padding-bottom: 6px;
+  }
+  #mainView h1::after {
+    height: 4px;
+    width: 50%;
+  }
+
+  /* logo + título menores */
+  .page-header { gap: 0.25rem; }
+  .site-logo { width: 24px; height: 24px; }
+  .site-title { font-size: 1.1rem; }
+
+  /* tabelas roláveis */
   .content table,
   .inventory-table {
     display: block;
