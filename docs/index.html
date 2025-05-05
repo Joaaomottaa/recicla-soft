@@ -1,35 +1,28 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
   <!-- Montserrat -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" 
-  rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+    rel="stylesheet"
   />
 
   <title>Recicla-Soft</title>
   <link rel="stylesheet" href="style.css" />
-
 </head>
 <body>
-
   <!-- Modal de Login/Cadastro -->
   <div id="loginModal" class="modal">
     <div id="loginView" class="box">
       <div class="login-header">
-        <img
-          src="https://w7.pngwing.com/pngs/380/554/png-transparent-recycle-logo-recycling-symbol-icon-recycle-leaf-recycling-waste-thumbnail.png"
-          alt="Ícone Reciclagem"
-          class="login-icon"
-        />
+        <img src="https://w7.pngwing.com/pngs/380/554/png-transparent-recycle-logo-recycling-symbol-icon-recycle-leaf-recycling-waste-thumbnail.png"
+             alt="Ícone Reciclagem" class="login-icon"/>
         <h2>Bem-vindo ao Recicla-Soft</h2>
-        <img
-          src="https://w7.pngwing.com/pngs/380/554/png-transparent-recycle-logo-recycling-symbol-icon-recycle-leaf-recycling-waste-thumbnail.png"
-          alt="Ícone Reciclagem"
-          class="login-icon"
-        />
+        <img src="https://w7.pngwing.com/pngs/380/554/png-transparent-recycle-logo-recycling-symbol-icon-recycle-leaf-recycling-waste-thumbnail.png"
+             alt="Ícone Reciclagem" class="login-icon"/>
       </div>
       <input type="email"    id="loginEmail" placeholder="Email" />
       <input type="password" id="loginPass"  placeholder="Senha" />
@@ -40,8 +33,7 @@
       </div>
       <div class="msg" id="loginMsg"></div>
     </div>
-
-    <div id="registerView" class="box" style="display: none;">
+    <div id="registerView" class="box" style="display:none;">
       <h2>Cadastro de Usuário</h2>
       <input type="text"     id="regName"  placeholder="Nome" />
       <input type="email"    id="regEmail" placeholder="Email" />
@@ -53,83 +45,50 @@
   </div>
 
   <!-- App Principal -->
-  <div id="appContainer" class="container" style="display: none;">
-    <!-- HEADER MÓVEL (apenas <600px) -->
-    <header class="mobile-header">
-      <div class="mobile-header-left">
-        <img
-          src="https://w7.pngwing.com/pngs/929/949/png-transparent-recycling-symbol-others-recycling-logo-waste.png"
-          alt="Recicla-Soft"
-          class="mobile-logo"
-        />
-        <span class="mobile-title">Recicla-Soft</span>
-      </div>
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/55/55003.png"
-        alt="Menu"
-        id="mobileMenuToggle"
-        class="mobile-menu-icon"
-      />
-    </header>
-
-    <!-- SIDEBAR LATERAL -->
-    <aside class="sidebar">
+  <div id="appContainer" class="container" style="display:none;">
+    <nav class="sidebar">
       <div id="greeting" class="greeting">Olá, —</div>
       <ul class="menu">
-        <li class="menu-item active" data-view="mainView">Compra de Material</li>
-        <li class="menu-item"       data-view="sellView">Venda de Estoque</li>
-        <li class="menu-item"       data-view="salesView">Relatório de materiais</li>
+        <li class="menu-item active" data-view="mainView">Tela Principal</li>
+        <li class="menu-item"       data-view="salesView">Últimas Vendas</li>
         <li class="menu-item"       data-view="stockView">Estoque</li>
         <li class="menu-item"       data-view="alterView">Alterar valor do material</li>
         <li class="menu-item"       data-view="addView">Adicionar material</li>
         <li class="menu-item"       data-view="removeView">Remover material</li>
-        <li class="menu-item" data-view="summaryView">Resumo Mensal</li>
-        <li class="menu-item logout" id="btnLogout">Logout</li>
+        <li class="menu-item"       id="btnLogout">Logout</li>
       </ul>
-    </aside>
+      
 
-    <!-- CONTEÚDO PRINCIPAL -->
+    </nav>
+
     <main class="content">
       <!-- 1) Tela Principal -->
       <section id="mainView" class="view">
-        <div class="view-header">
-          <h1>Compra de materiais</h1>
-          <div class="page-header">
-            <img
-              src="https://w7.pngwing.com/pngs/653/231/png-transparent-recycling-symbol-graphics-recycling-bin-non-recyclable-icon-angle-leaf-text.png"
-              alt="Logo Recicla-Soft"
-              class="site-logo"
-            />
-            <span class="site-title">Recicla-Soft</span>
-          </div>
-        </div>
-        <label>
-          Material:
+        <h1>Calculadora de Materiais</h1>
+        <label>Material:
           <select id="materialSelect">
             <option value="" disabled selected>-- Escolha um material --</option>
           </select>
         </label>
-        <label>
-          Quantidade (kg):
+        <label>Quantidade (kg):
           <input type="number" id="quantityInput" min="0" step="0.01" />
         </label>
         <div class="buttons">
           <button id="btnCalc">Calcular</button>
-          <button id="btnRegSale" disabled>Registrar compra</button>
+          <button id="btnRegSale" disabled>Registrar Venda</button>
         </div>
         <div id="calcResult"></div>
       </section>
 
       <!-- 2) Últimas Vendas -->
-      <section id="salesView" class="view" style="display: none;">
-        <h1>Relatório de materiais</h1>
+      <section id="salesView" class="view" style="display:none;">
+        <h1>Últimas Vendas</h1>
         <table>
           <thead>
             <tr>
               <th>Material</th>
               <th>Qtd (kg)</th>
               <th>Total (R$)</th>
-              <th>Tipo</th>
               <th>Data/Hora</th>
             </tr>
           </thead>
@@ -137,59 +96,39 @@
         </table>
       </section>
 
-      <!-- 3) Estoque -->
-      <section id="stockView" class="view" style="display: none;">
-        <h1>Estoque</h1>
-        <table class="inventory-table">
-          <thead>
-            <tr>
-              <th>Material</th>
-              <th>Total (kg)</th>
-              <th>Valor Acumulado (R$)</th>
-            </tr>
-          </thead>
-          <tbody id="stockBody"></tbody>
-        </table>
-      </section>
-
-      <!-- 4) Alterar Valor do Material -->
-      <section id="alterView" class="view" style="display: none;">
+      <!-- 3) Alterar Valor -->
+      <section id="alterView" class="view" style="display:none;">
         <h1>Alterar Valor do Material</h1>
-        <label>
-          Material:
+        <label>Material:
           <select id="alterMaterial">
             <option value="" disabled selected>-- Escolha um material --</option>
           </select>
         </label>
         <p id="currentPrice">Preço atual: R$ 0,00</p>
-        <label>
-          Novo preço (R$/kg):
+        <label>Novo preço (R$/kg):
           <input type="number" id="alterPrice" min="0" step="0.01" />
         </label>
         <button id="btnAlter">Atualizar</button>
         <div class="msg" id="alterMsg"></div>
       </section>
 
-      <!-- 5) Adicionar Material -->
-      <section id="addView" class="view" style="display: none;">
+      <!-- 4) Adicionar Material -->
+      <section id="addView" class="view" style="display:none;">
         <h1>Adicionar Material</h1>
-        <label>
-          Nome:
+        <label>Nome:
           <input type="text" id="newName" />
         </label>
-        <label>
-          Preço (R$/kg):
+        <label>Preço (R$/kg):
           <input type="number" id="newPrice" min="0" step="0.01" />
         </label>
         <button id="btnAdd">Adicionar</button>
         <div class="msg" id="addMsg"></div>
       </section>
 
-      <!-- 6) Remover Material -->
-      <section id="removeView" class="view" style="display: none;">
+      <!-- 5) Remover Material -->
+      <section id="removeView" class="view" style="display:none;">
         <h1>Remover Material</h1>
-        <label>
-          Material a remover:
+        <label>Material a remover:
           <select id="removeSelect">
             <option value="" disabled selected>-- Escolha um material --</option>
           </select>
@@ -197,80 +136,29 @@
         <button id="btnRemove">Remover</button>
         <div class="msg" id="removeMsg"></div>
       </section>
+      
+<!-- 6) Estoque -->
+<section id="stockView" class="view" style="display:none;">
+  <h1>Estoque</h1>
+  <table class="inventory-table">
+    <thead>
+      <tr>
+        <th>Material</th>
+        <th>Total (kg)</th>
+        <th>Valor Acumulado (R$)</th>
+      </tr>
+    </thead>
+    <tbody id="stockBody">
+      <!-- Será preenchido pelo loadStock() -->
+    </tbody>
+  </table>
+</section>
 
-      <!-- 7) Resumo Mensal -->
-      <section id="summaryView" class="view" style="display:none;">
-        <h1>Resumo Mensal</h1>
-        <label for="summaryMonth">Mês:</label>
-        <input type="month" id="summaryMonth" />
-        <button id="btnLoadSummary" class="btn-summary">Carregar Resumo</button>
-        <div id="summaryCards" class="cards"></div>
-      </section>
-
-      <!-- 8) Venda de Estoque -->
-      <section id="sellView" class="view" style="display:none;">
-        <h1>Venda de Estoque</h1>
-        <label>
-          Material em Estoque:
-          <select id="sellMaterialSelect">
-            <option disabled>Carregando...</option>
-          </select>
-        </label>
-        <p id="sellAvailable">Disponível: 0 kg</p>
-
-        <label>
-          Quantidade a Vender (kg):
-          <input type="number" id="sellQuantity" min="0" step="0.01" />
-        </label>
-        <label>
-          A quanto será vendido o KG?
-          <small id="buyPriceInfo" class="info-text"></small>
-          <input type="number" id="sellPricePerKg" min="0" step="0.01" />
-        </label>
-
-        <div class="buttons">
-          <button id="btnSellCalc">Calcular</button>
-          <button id="btnConfirmSell" disabled>Confirmar Venda</button>
-        </div>
-        <div id="sellCalcResult" class="msg"></div>
-      </section>
 
     </main>
   </div>
 
-  <!-- WhatsApp flutuante -->
-  <div class="whatsapp-float">
-    <a href="https://api.whatsapp.com/send?phone=5575998920162&text=Ol%C3%A1%21%20Gostaria%20de%20%20%C3%A7%C3%B5es." target="_blank" rel="noopener">
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-        alt="WhatsApp"
-      />
-    </a>
-  </div>
 
-  <div id="chat-toggle" class="chat-toggle">
-    <img src="https://cdn-icons-png.freepik.com/512/12383/12383841.png" alt="Abrir Chat Bot Recicla-Soft" />
-  </div>
-
-  <!-- Widget de Chat -->
-<div id="chat-widget" class="chat-widget">
-  <div class="chat-header">
-    <img
-      src="https://i.ibb.co/461Gw4C/7af0b645-ac68-4509-8a57-ce010c7694da.png"
-      alt="Bot Recicla‑Soft"
-      class="chat-logo"
-    />
-    <span>Bot Recicla‑Soft</span>
-    <button id="chat-close">×</button>
-  </div>
-  <div id="chat-body" class="chat-body">
-    <div class="message bot">Olá! Eu sou o Bot Recicla‑Soft. Como posso ajudar?</div>
-  </div>
-  <div class="chat-input">
-    <input id="chat-input" type="text" placeholder="Escreva algo..." />
-    <button id="chat-send">▶</button>
-  </div>
-</div>
 
   <script defer src="script.js"></script>
 </body>
